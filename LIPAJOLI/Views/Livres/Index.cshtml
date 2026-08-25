@@ -6,6 +6,20 @@
 
 <h1>Gestion des livres</h1>
 
+@if (TempData["Succes"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Succes"]
+    </div>
+}
+
+@if (TempData["Erreur"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Erreur"]
+    </div>
+}
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -61,9 +75,9 @@
                 @Html.DisplayFor(modelItem => livre.Prix)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@livre.Code">Edit</a> |
-                <a asp-action="Details" asp-route-id="@livre.Code">Details</a> |
-                <a asp-action="Delete" asp-route-id="@livre.Code">Delete</a>
+                <a asp-action="Edit" asp-route-id="@livre.Code">Modifier</a> |
+                <a asp-action="Details" asp-route-id="@livre.Code">Consulter</a> |
+                <a asp-action="Delete" asp-route-id="@livre.Code">Supprimer</a>
             </td>
         </tr>
 }

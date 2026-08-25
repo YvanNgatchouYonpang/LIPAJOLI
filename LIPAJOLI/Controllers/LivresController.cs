@@ -214,13 +214,35 @@ namespace LIPAJOLI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var livre = await _context.Livres.FindAsync(id);
-            if (livre != null)
+            if (id == null)
             {
-                _context.Livres.Remove(livre);
+                return NotFound();
             }
 
+            var livre = await _context.Livres
+                .Include(l => l.Emprunts)
+                .FirstOrDefaultAsync(l => l.Code == id);
+
+            if (livre == null)
+            {
+                return NotFound();
+            }
+
+            // Vérifier si le livre possède un historique d'emprunts
+            if (livre.Emprunts != null && livre.Emprunts.Any())
+            {
+                TempData["Erreur"] =
+                    "Ce livre ne peut pas être supprimé car il possède un historique d'emprunts.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.Livres.Remove(livre);
+
             await _context.SaveChangesAsync();
+
+            TempData["Succes"] = "Le livre a été supprimé avec succès.";
+
             return RedirectToAction(nameof(Index));
         }
 

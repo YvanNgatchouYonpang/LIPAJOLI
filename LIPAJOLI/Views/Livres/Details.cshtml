@@ -1,91 +1,86 @@
 ﻿@model LIPAJOLI.Models.Livre
 
 @{
-    ViewData["Title"] = "Consultation d'un Livre";
+    ViewData["Title"] = "Consultation du livre";
 }
 
-<h1>Consultation d'un Livre</h1>
+<h1>Consultation du livre</h1>
 
+<hr />
 
-    <h4>Informations du Livre</h4>
-    <dl class="row">
+<h3>Informations du livre</h3>
 
-        <dt class="col-sm-3">
-            Code
-        </dt>
+<dl class="row">
 
-        <dd class="col-sm-9">
-            @Model.Code
-        </dd>
+    <dt class="col-sm-3">
+        Code
+    </dt>
 
+    <dd class="col-sm-9">
+        @Model.Code
+    </dd>
 
-        <dt class="col-sm-3">
-            ISBN-10
-        </dt>
+    <dt class="col-sm-3">
+        ISBN-10
+    </dt>
 
-        <dd class="col-sm-9">
-            @Model.ISBN10
-        </dd>
+    <dd class="col-sm-9">
+        @Model.ISBN10
+    </dd>
 
+    <dt class="col-sm-3">
+        ISBN-13
+    </dt>
 
-        <dt class="col-sm-3">
-            ISBN-13
-        </dt>
+    <dd class="col-sm-9">
+        @Model.ISBN13
+    </dd>
 
-        <dd class="col-sm-9">
-            @Model.ISBN13
-        </dd>
+    <dt class="col-sm-3">
+        Titre
+    </dt>
 
+    <dd class="col-sm-9">
+        @Model.Titre
+    </dd>
 
-        <dt class="col-sm-3">
-            Titre
-        </dt>
+    <dt class="col-sm-3">
+        Auteurs
+    </dt>
 
-        <dd class="col-sm-9">
-            @Model.Titre
-        </dd>
+    <dd class="col-sm-9">
+        @Model.Auteurs
+    </dd>
 
+    <dt class="col-sm-3">
+        Catégorie
+    </dt>
 
-        <dt class="col-sm-3">
-            Auteurs
-        </dt>
+    <dd class="col-sm-9">
+        @Model.Categorie
+    </dd>
 
-        <dd class="col-sm-9">
-            @Model.Auteurs
-        </dd>
+    <dt class="col-sm-3">
+        Quantité disponible
+    </dt>
 
+    <dd class="col-sm-9">
+        @Model.Quantite
+    </dd>
 
-        <dt class="col-sm-3">
-            Catégorie
-        </dt>
+    <dt class="col-sm-3">
+        Prix
+    </dt>
 
-        <dd class="col-sm-9">
-            @Model.Categorie
-        </dd>
+    <dd class="col-sm-9">
+        @Model.Prix.ToString("C")
+    </dd>
 
+</dl>
 
-        <dt class="col-sm-3">
-            Quantité disponible
-        </dt>
+<hr />
 
-        <dd class="col-sm-9">
-            @Model.Quantite
-        </dd>
-
-
-        <dt class="col-sm-3">
-            Prix
-        </dt>
-
-        <dd class="col-sm-9">
-            @Model.Prix.ToString("C")
-        </dd>
-
-    </dl>
-
-    <hr />
-
-    <h3>Historique des emprunts</h3>
+<h3>Historique des emprunts</h3>
 
 @if (Model.Emprunts == null || !Model.Emprunts.Any())
 {
@@ -95,7 +90,7 @@
 }
 else
 {
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
 
         <thead class="table-secondary">
 
@@ -111,15 +106,23 @@ else
 
         <tbody>
 
-            @foreach (var emprunt in Model.Emprunts)
+            @foreach (var emprunt in Model.Emprunts
+                    .OrderByDescending(e => e.DateEmprunt))
             {
                 bool enCours = emprunt.DateRetour == null;
 
                 <tr class="@(enCours ? "table-warning" : "")">
 
                     <td>
-                        @emprunt.Usager.Nom
-                        @emprunt.Usager.Prenom
+                        @if (emprunt.Usager != null)
+                        {
+                            @emprunt.Usager.Nom
+                            @emprunt.Usager.Prenom
+                        }
+                        else
+                        {
+                            @emprunt.UsagerNoAbonne
+                        }
                     </td>
 
                     <td>
@@ -133,11 +136,13 @@ else
                     <td>
                         @if (emprunt.DateRetour.HasValue)
                         {
-                            @emprunt.DateRetour.Value.ToString("dd/MM/yyyy")
-                        }
+                @emprunt.DateRetour.Value.ToString("dd/MM/yyyy")
+                                        }
                         else
                         {
-                            <span>Non retourné</span>
+                            <span class="text-danger">
+                                Non retourné
+                            </span>
                         }
                     </td>
 
@@ -163,3 +168,18 @@ else
 
     </table>
 }
+
+<hr />
+
+<div>
+    <a asp-action="Edit"
+       asp-route-id="@Model.Code"
+       class="btn btn-warning">
+        Modifier
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Retour à la liste
+    </a>
+</div>

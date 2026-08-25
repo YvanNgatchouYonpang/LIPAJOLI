@@ -20,9 +20,24 @@ namespace LIPAJOLI.Controllers
         }
 
         // GET: Usagers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? recherche)
         {
-            return View(await _context.Usagers.ToListAsync());
+            IQueryable<Usager> usagers = _context.Usagers;
+
+            if (!string.IsNullOrWhiteSpace(recherche))
+            {
+                recherche = recherche.Trim();
+
+                usagers = usagers.Where(u =>
+                    u.Nom.Contains(recherche) ||
+                    u.Prenom.Contains(recherche));
+            }
+
+            usagers = usagers
+                .OrderBy(u => u.Nom)
+                .ThenBy(u => u.Prenom);
+
+            return View(await usagers.ToListAsync());
         }
 
         // GET: Usagers/Details/5

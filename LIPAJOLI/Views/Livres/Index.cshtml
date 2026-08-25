@@ -21,11 +21,14 @@
 }
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Ajouter un Livre</a>
 </p>
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Code)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.ISBN10)
             </th>
@@ -53,6 +56,9 @@
     <tbody>
 @foreach (var livre in Model) {
         <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => livre.Code)
+                </td>
             <td>
                 @Html.DisplayFor(modelItem => livre.ISBN10)
             </td>

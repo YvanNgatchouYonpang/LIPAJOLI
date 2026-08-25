@@ -127,7 +127,8 @@ namespace LIPAJOLI.Controllers
                 return NotFound();
             }
 
-            var livre = await _context.Livres.FindAsync(id);
+            var livre = await _context.Livres
+       .FirstOrDefaultAsync(l => l.Code == id);
             if (livre == null)
             {
                 return NotFound();
@@ -147,27 +148,46 @@ namespace LIPAJOLI.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(livre);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LivreExists(livre.Code))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(livre);
             }
-            return View(livre);
+
+            if (!ValiderIsbn10(livre.ISBN10))
+            {
+                ModelState.AddModelError(
+                    nameof(livre.ISBN10),
+                    "Le numéro ISBN-10 est invalide.");
+
+                return View(livre);
+            }
+
+            if (!ValiderIsbn13(livre.ISBN13))
+            {
+                ModelState.AddModelError(
+                    nameof(livre.ISBN13),
+                    "Le numéro ISBN-13 est invalide.");
+
+                return View(livre);
+            }
+
+            try
+            {
+                _context.Update(livre);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!LivreExists(livre.Code))
+                {
+                    return NotFound();
+                }
+
+                throw;
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Livres/Delete/5
@@ -203,9 +223,9 @@ namespace LIPAJOLI.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LivreExists(string id)
+        private bool LivreExists(string code)
         {
-            return _context.Livres.Any(e => e.Code == id);
+            return _context.Livres.Any(e => e.Code == code);
         }
 
 

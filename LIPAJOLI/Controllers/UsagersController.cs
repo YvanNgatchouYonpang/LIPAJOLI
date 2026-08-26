@@ -43,13 +43,17 @@ namespace LIPAJOLI.Controllers
         // GET: Usagers/Details/5
         public async Task<IActionResult> Details(string id)
         {
+
             if (id == null)
             {
                 return NotFound();
             }
 
             var usager = await _context.Usagers
-                .FirstOrDefaultAsync(m => m.NoAbonne == id);
+                .Include(u => u.Emprunts)
+                    .ThenInclude(e => e.Livre)
+                .FirstOrDefaultAsync(u => u.NoAbonne == id);
+
             if (usager == null)
             {
                 return NotFound();

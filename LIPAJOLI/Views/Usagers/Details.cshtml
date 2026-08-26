@@ -1,48 +1,172 @@
 ﻿@model LIPAJOLI.Models.Usager
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Consultation de l'usager";
 }
 
-<h1>Details</h1>
+<h1>Consultation de l'usager</h1>
+
+<hr />
+
+<h3>Informations de l'usager</h3>
+
+<dl class="row">
+
+    <dt class="col-sm-3">
+        N° d'abonné
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.NoAbonne
+    </dd>
+
+    <dt class="col-sm-3">
+        Nom
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Nom
+    </dd>
+
+    <dt class="col-sm-3">
+        Prénom
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Prenom
+    </dd>
+
+    <dt class="col-sm-3">
+        Statut
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Statut
+    </dd>
+
+    <dt class="col-sm-3">
+        Défaillances
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Defaillance
+    </dd>
+
+    <dt class="col-sm-3">
+        Courriel
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Email
+    </dd>
+
+</dl>
+
+<hr />
+
+<h3>Historique des emprunts</h3>
+
+@if (Model.Emprunts == null || !Model.Emprunts.Any())
+{
+    <div class="alert alert-info">
+        Aucun emprunt n'a encore été enregistré pour cet usager.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+
+        <thead class="table-secondary">
+
+            <tr>
+                <th>Livre</th>
+                <th>Date d'emprunt</th>
+                <th>Date limite de retour</th>
+                <th>Date de retour</th>
+                <th>État</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @foreach (var emprunt in Model.Emprunts
+                    .OrderByDescending(e => e.DateEmprunt))
+            {
+                bool enCours = emprunt.DateRetour == null;
+
+                <tr class="@(enCours ? "table-warning" : "")">
+
+                    <td>
+                        @if (emprunt.Livre != null)
+                        {
+                            <strong>@emprunt.Livre.Code</strong>
+                            <br />
+                            @emprunt.Livre.Titre
+                        }
+                        else
+                        {
+                            @emprunt.LivreCode
+                        }
+                    </td>
+
+                    <td>
+                        @emprunt.DateEmprunt.ToString("dd/MM/yyyy")
+                    </td>
+
+                    <td>
+                        @emprunt.DateLimiteRetour.ToString("dd/MM/yyyy")
+                    </td>
+
+                    <td>
+                        @if (emprunt.DateRetour.HasValue)
+                        {
+                            @emprunt.DateRetour.Value.ToString("dd/MM/yyyy")
+                        }
+                        else
+                        {
+                            <span class="text-danger">
+                                Non retourné
+                            </span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (enCours)
+                        {
+                            <span class="badge bg-warning text-dark">
+                                Emprunt en cours
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">
+                                Retourné
+                            </span>
+                        }
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+}
+
+<hr />
 
 <div>
-    <h4>Usager</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nom)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nom)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Prenom)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Prenom)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Statut)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Statut)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Defaillance)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Defaillance)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.NoAbonne">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    <a asp-action="Edit"
+       asp-route-id="@Model.NoAbonne"
+       class="btn btn-warning">
+        Modifier
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Retour à la liste
+    </a>
+
 </div>

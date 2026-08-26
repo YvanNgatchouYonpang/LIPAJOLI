@@ -192,7 +192,8 @@ namespace LIPAJOLI.Controllers
             }
 
             var usager = await _context.Usagers
-                .FirstOrDefaultAsync(m => m.NoAbonne == id);
+                .FirstOrDefaultAsync(u => u.NoAbonne == id);
+
             if (usager == null)
             {
                 return NotFound();
@@ -206,13 +207,37 @@ namespace LIPAJOLI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var usager = await _context.Usagers.FindAsync(id);
-            if (usager != null)
+            if (id == null)
             {
-                _context.Usagers.Remove(usager);
+                return NotFound();
             }
 
+            var usager = await _context.Usagers
+                .Include(u => u.Emprunts)
+                .FirstOrDefaultAsync(u => u.NoAbonne == id);
+
+            if (usager == null)
+            {
+                return NotFound();
+            }
+
+            // Un usager ayant un historique d'emprunts
+            // ne doit pas être supprimé.
+            if (usager.Emprunts != null && usager.Emprunts.Any())
+            {
+                TempData["Erreur"] =
+                    "Cet usager ne peut pas être supprimé car il possède un historique d'emprunts.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.Usagers.Remove(usager);
+
             await _context.SaveChangesAsync();
+
+            TempData["Succes"] =
+                "L'usager a été supprimé avec succès.";
+
             return RedirectToAction(nameof(Index));
         }
 

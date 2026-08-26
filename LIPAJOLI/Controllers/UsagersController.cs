@@ -108,11 +108,14 @@ namespace LIPAJOLI.Controllers
                 return NotFound();
             }
 
-            var usager = await _context.Usagers.FindAsync(id);
+            var usager = await _context.Usagers
+                .FirstOrDefaultAsync(u => u.NoAbonne == id);
+
             if (usager == null)
             {
                 return NotFound();
             }
+
             return View(usager);
         }
 
@@ -128,27 +131,52 @@ namespace LIPAJOLI.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
+                return View(usager);
+            }
+
+            try
+            {
+                var usagerExistant = await _context.Usagers
+                    .FirstOrDefaultAsync(u => u.NoAbonne == id);
+
+                if (usagerExistant == null)
                 {
-                    _context.Update(usager);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UsagerExists(usager.NoAbonne))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                // Le numéro d'abonné ne change pas
+                usagerExistant.NoAbonne = usager.NoAbonne;
+
+                // Modification des informations autorisées
+                usagerExistant.Nom = usager.Nom;
+                usagerExistant.Prenom = usager.Prenom;
+                usagerExistant.Statut = usager.Statut;
+                usagerExistant.Email = usager.Email;
+
+                // La défaillance n'est volontairement pas modifiée
+
+                await _context.SaveChangesAsync();
+
+                TempData["Succes"] =
+                    "L'usager a été modifié avec succès.";
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(usager);
+            catch (DbUpdateConcurrencyException)
+            {
+                bool existe = await _context.Usagers
+                    .AnyAsync(u => u.NoAbonne == id);
+
+                if (!existe)
+                {
+                    return NotFound();
+                }
+
+                throw;
+            }
+
         }
 
         // GET: Usagers/Delete/5

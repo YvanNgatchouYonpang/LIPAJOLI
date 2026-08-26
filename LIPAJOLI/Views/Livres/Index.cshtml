@@ -23,11 +23,51 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">Ajouter un Livre</a>
 </p>
+
+<form asp-action="Index"
+      method="get"
+      class="mb-4">
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <input type="text"
+                   name="recherche"
+                   value="@Context.Request.Query["recherche"]"
+                   class="form-control"
+                   placeholder="Rechercher par nom ou prénom" />
+
+        </div>
+
+        <div class="col-md-2">
+
+            <button type="submit"
+                    class="btn btn-primary w-100">
+                Rechercher
+            </button>
+
+        </div>
+
+        <div class="col-md-2">
+
+            <a asp-action="Index"
+               class="btn btn-secondary w-100">
+                Réinitialiser
+            </a>
+
+        </div>
+
+    </div>
+
+</form>
+
 <table class="table table-bordered table-striped">
     <thead class="table-secondary">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Code)
+                <a asp-action="Index" asp-route-tri="@ViewData["ParamCodeTri"]">Code</a>
+                @* @Html.DisplayNameFor(model => model.Code) *@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ISBN10)
@@ -36,7 +76,8 @@
                 @Html.DisplayNameFor(model => model.ISBN13)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Titre)
+                <a asp-action="Index" asp-route-tri="@ViewData["ParamTitreTri"]">Titre</a>
+                @* @Html.DisplayNameFor(model => model.Titre) *@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Auteurs)

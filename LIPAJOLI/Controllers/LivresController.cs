@@ -1,12 +1,13 @@
-﻿using System;
+﻿using LIPAJOLI.Data;
+using LIPAJOLI.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using LIPAJOLI.Data;
-using LIPAJOLI.Models;
 
 namespace LIPAJOLI.Controllers
 {
@@ -23,29 +24,54 @@ namespace LIPAJOLI.Controllers
         public async Task<IActionResult> Index(string? recherche,
             string? tri)
         {
+            //ViewData["CurrentSort"] = tri;
+            ViewData["ParamCodeTri"] =String.IsNullOrEmpty(tri) ? "Code_desc" : "";
+            ViewData["ParamTitreTri"] = tri == "Titre" ? "Titre_desc" : "Titre";
+
             IQueryable<Livre> livres = _context.Livres;
 
             // Recherche
             if (!string.IsNullOrWhiteSpace(recherche))
             {
-                recherche = recherche.Trim();
+                recherche = recherche.Trim().ToLower();
 
-                livres = livres.Where(l => l.Titre.Contains(recherche) || l.Auteurs.Contains(recherche) ||l.Categorie.Contains(recherche));
+                livres = livres.Where(l => l.Titre.ToLower().Contains(recherche) || l.Auteurs.ToLower().Contains(recherche) ||l.Categorie.ToLower().Contains(recherche));
             }
 
             // Tri
-            livres = tri switch
+            //livres = tri switch
+            //{
+            //    "code" => livres.OrderBy(l => l.Code),
+
+            //    "code_desc" => livres.OrderByDescending(l => l.Code),
+
+            //    "titre" => livres.OrderBy(l => l.Titre),
+
+            //    "titre_desc" => livres.OrderByDescending(l => l.Titre),
+
+            //    _ => livres.OrderBy(l => l.Code)
+            //};
+
+            if (string.IsNullOrEmpty(tri))
             {
-                "code" => livres.OrderBy(l => l.Code),
+                tri = "Code";
+            }
 
-                "code_desc" => livres.OrderByDescending(l => l.Code),
+            bool descending = false;
+            if (tri.EndsWith("_desc"))
+            {
+                tri = tri.Substring(0, tri.Length - 5);
+                descending = true;
+            }
 
-                "titre" => livres.OrderBy(l => l.Titre),
-
-                "titre_desc" => livres.OrderByDescending(l => l.Titre),
-
-                _ => livres.OrderBy(l => l.Code)
-            };
+            if (descending)
+            {
+                livres = livres.OrderByDescending(l => EF.Property<object>(l, tri));
+            }
+            else
+            {
+                livres = livres.OrderBy(l => EF.Property<object>(l, tri));
+            }
 
             return View(await livres.ToListAsync());
         }
@@ -302,20 +328,31 @@ namespace LIPAJOLI.Controllers
                     return false;
             }
 
-            if (!(char.IsDigit(isbn[9]) || isbn[9] == 'X'))
-                return false;
+            //if (!(char.IsDigit(isbn[9]) || isbn[9] == 'X'))
+            //    return false;
 
             int somme = 0;
 
             for (int i = 0; i < 9; i++)
             {
-                somme += (isbn[i] - '0') * (10 - i);
+                somme += (isbn[i] - '0') * (i+1);
             }
 
-            int dernierChiffre =
-                isbn[9] == 'X' ? 10 : isbn[9] - '0';
+            int dernierChiffre;
 
-            somme += dernierChiffre;
+            if (isbn[9] == 'X')
+            {
+                dernierChiffre = 10;
+            }else if (char.IsDigit(isbn[9]))
+            {
+                dernierChiffre = isbn[9] - '0';
+            }else
+            {
+                return false;
+            }
+                //isbn[9] == 'X' ? 10 : isbn[9] - '0';
+
+            somme += 10 * dernierChiffre;
 
             return somme % 11 == 0;
         }
@@ -335,7 +372,7 @@ namespace LIPAJOLI.Controllers
 
             int somme = 0;
 
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i <= 12; i++)
             {
                 int chiffre = isbn[i] - '0';
 

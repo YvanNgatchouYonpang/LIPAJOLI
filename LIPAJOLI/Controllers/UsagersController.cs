@@ -71,13 +71,33 @@ namespace LIPAJOLI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("NoAbonne,Nom,Prenom,Statut,Defaillance,Email")] Usager usager)
         {
-            if (ModelState.IsValid)
+            // La défaillance est toujours initialisée à 0
+            usager.Defaillance = 0;
+
+            // Vérifier que le numéro d'abonné n'existe pas déjà
+            bool numeroExiste = await _context.Usagers
+                .AnyAsync(u => u.NoAbonne == usager.NoAbonne);
+
+            if (numeroExiste)
             {
-                _context.Add(usager);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(
+                    nameof(usager.NoAbonne),
+                    "Ce numéro d'abonné existe déjà.");
             }
-            return View(usager);
+
+            if (!ModelState.IsValid)
+            {
+                return View(usager);
+            }
+
+            _context.Usagers.Add(usager);
+
+            await _context.SaveChangesAsync();
+
+            TempData["Succes"] =
+                "L'usager a été ajouté avec succès.";
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Usagers/Edit/5

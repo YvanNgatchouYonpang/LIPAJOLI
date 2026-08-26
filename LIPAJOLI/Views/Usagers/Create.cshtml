@@ -1,58 +1,123 @@
 ﻿@model LIPAJOLI.Models.Usager
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Ajouter un usager";
 }
 
-<h1>Create</h1>
+<h1>Ajouter un usager</h1>
 
-<h4>Usager</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="NoAbonne" class="control-label"></label>
-                <input asp-for="NoAbonne" class="form-control" />
-                <span asp-validation-for="NoAbonne" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Nom" class="control-label"></label>
-                <input asp-for="Nom" class="form-control" />
-                <span asp-validation-for="Nom" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Prenom" class="control-label"></label>
-                <input asp-for="Prenom" class="form-control" />
-                <span asp-validation-for="Prenom" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Statut" class="control-label"></label>
-                <select asp-for="Statut" class="form-control"></select>
-                <span asp-validation-for="Statut" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Defaillance" class="control-label"></label>
-                <input asp-for="Defaillance" class="form-control" />
-                <span asp-validation-for="Defaillance" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<form asp-action="Create" method="post">
+
+    <div asp-validation-summary="ModelOnly"
+         class="text-danger">
+    </div>
+
+    <!-- Numéro d'abonné -->
+    <div class="mb-3">
+        <label asp-for="NoAbonne" class="form-label">
+            N° d'abonné
+        </label>
+
+        <input asp-for="NoAbonne"
+               class="form-control" />
+
+        <span asp-validation-for="NoAbonne"
+              class="text-danger">
+        </span>
+    </div>
+
+    <!-- Nom -->
+    <div class="mb-3">
+        <label asp-for="Nom" class="form-label">
+            Nom
+        </label>
+
+        <input asp-for="Nom"
+               class="form-control" />
+
+        <span asp-validation-for="Nom"
+              class="text-danger">
+        </span>
+    </div>
+
+    <!-- Prénom -->
+    <div class="mb-3">
+        <label asp-for="Prenom" class="form-label">
+            Prénom
+        </label>
+
+        <input asp-for="Prenom"
+               class="form-control" />
+
+        <span asp-validation-for="Prenom"
+              class="text-danger">
+        </span>
+    </div>
+
+    <!-- Statut -->
+    <div class="mb-3">
+
+        <label asp-for="Statut" class="form-label">
+            Statut
+        </label>
+
+        <select asp-for="Statut"
+                class="form-select">
+
+            <option value="">
+                -- Sélectionner un statut --
+            </option>
+
+            <option value="Etudiant">
+                Étudiant
+            </option>
+
+            <option value="Enseignant">
+                Enseignant
+            </option>
+
+        </select>
+
+        <span asp-validation-for="Statut"
+              class="text-danger">
+        </span>
+
+    </div>
+
+    <!-- Courriel -->
+    <div class="mb-3">
+
+        <label asp-for="Email" class="form-label">
+            Courriel
+        </label>
+
+        <input asp-for="Email"
+               type="email"
+               class="form-control"
+               placeholder="exemple@courriel.com" />
+
+        <span asp-validation-for="Email"
+              class="text-danger">
+        </span>
+
+    </div>
+
+    <button type="submit"
+            class="btn btn-primary">
+        Enregistrer
+    </button>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Retour à la liste
+    </a>
+
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

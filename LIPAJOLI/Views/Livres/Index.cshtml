@@ -21,10 +21,10 @@
 }
 
 <p>
-    <a asp-action="Create">Ajouter un Livre</a>
+    <a asp-action="Create" class="btn btn-primary">Ajouter un Livre</a>
 </p>
-<table class="table">
-    <thead>
+<table class="table table-bordered table-striped">
+    <thead class="table-secondary">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Code)
@@ -81,9 +81,10 @@
                 @Html.DisplayFor(modelItem => livre.Prix)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@livre.Code">Modifier</a> |
-                <a asp-action="Details" asp-route-id="@livre.Code">Consulter</a> |
-                <a asp-action="Delete" asp-route-id="@livre.Code">Supprimer</a>
+
+                    <a asp-action="Details" class="btn btn-info btn-sm" asp-route-id="@livre.Code">Consulter</a> |
+                    <a asp-action="Edit" class="btn btn-warning btn-sm" asp-route-id="@livre.Code">Modifier</a> |
+                    <a asp-action="Delete" class="btn btn-danger btn-sm" asp-route-id="@livre.Code">Supprimer</a>
             </td>
         </tr>
 }

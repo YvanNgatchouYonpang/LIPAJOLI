@@ -30,10 +30,12 @@ namespace LIPAJOLI.Models
 
         [Range(0, int.MaxValue,
             ErrorMessage = "La quantité doit être supérieure ou égale à 0.")]
+        [Required(ErrorMessage = "La quantite est obligatoire.")]
         public int Quantite { get; set; }
 
         [Range(0.01, double.MaxValue,
             ErrorMessage = "Le prix doit être supérieur à 0.")]
+        [Required(ErrorMessage = "Le prix est obligatoire.")]
         public decimal Prix { get; set; }
 
         public ICollection<Emprunt> Emprunts { get; set; }

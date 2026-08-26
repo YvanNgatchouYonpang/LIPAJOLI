@@ -30,10 +30,7 @@ namespace LIPAJOLI.Controllers
             {
                 recherche = recherche.Trim();
 
-                livres = livres.Where(l =>
-                    l.Titre.Contains(recherche) ||
-                    l.Auteurs.Contains(recherche) ||
-                    l.Categorie.Contains(recherche));
+                livres = livres.Where(l => l.Titre.Contains(recherche) || l.Auteurs.Contains(recherche) ||l.Categorie.Contains(recherche));
             }
 
             // Tri
@@ -62,9 +59,7 @@ namespace LIPAJOLI.Controllers
                 return NotFound();
             }
 
-            var livre = await _context.Livres
-           .Include(l => l.Emprunts)
-           .FirstOrDefaultAsync(l => l.Code == id);
+            var livre = await _context.Livres.Include(l => l.Emprunts).FirstOrDefaultAsync(l => l.Code == id);
             if (livre == null)
             {
                 return NotFound();
@@ -128,8 +123,7 @@ namespace LIPAJOLI.Controllers
                 return NotFound();
             }
 
-            var livre = await _context.Livres
-       .FirstOrDefaultAsync(l => l.Code == id);
+            var livre = await _context.Livres.FirstOrDefaultAsync(l => l.Code == id);
             if (livre == null)
             {
                 return NotFound();

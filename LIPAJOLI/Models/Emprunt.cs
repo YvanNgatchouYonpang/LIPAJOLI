@@ -18,13 +18,13 @@ namespace LIPAJOLI.Models
         public DateTime? DateRetour { get; set; }
 
         [Required]
-        public string LivreCode { get; set; } 
+        public string? LivreCode { get; set; } 
 
         [ForeignKey(nameof(LivreCode))]
         public Livre? Livre { get; set; }
 
         [Required]
-        public string UsagerNoAbonne { get; set; } 
+        public string? UsagerNoAbonne { get; set; } 
 
         [ForeignKey(nameof(UsagerNoAbonne))]
         public Usager? Usager { get; set; }

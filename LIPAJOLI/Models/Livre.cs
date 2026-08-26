@@ -6,7 +6,7 @@ namespace LIPAJOLI.Models
     {
         [Key]
         [Required(ErrorMessage = "Le code du livre est obligatoire.")]
-        public string Code { get; set; } 
+        public string? Code { get; set; } 
 
         [Required(ErrorMessage = "Le numéro ISBN-10 est obligatoire.")]
         [StringLength(10, MinimumLength = 10,

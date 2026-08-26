@@ -10,7 +10,7 @@ namespace LIPAJOLI.Models
         [Required]
         public string Etat { get; set; } = "Disponible";
 
-        public string CodeLivre { get; set; }
+        public string? CodeLivre { get; set; }
 
         public Livre? Livre { get; set; }
 

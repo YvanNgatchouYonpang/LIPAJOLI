@@ -26,16 +26,14 @@ namespace LIPAJOLI.Controllers
 
             if (!string.IsNullOrWhiteSpace(recherche))
             {
-                recherche = recherche.Trim();
+                recherche = recherche.Trim().ToLower();
 
                 usagers = usagers.Where(u =>
-                    u.Nom.Contains(recherche) ||
-                    u.Prenom.Contains(recherche));
+                    u.Nom.ToLower().Contains(recherche) ||
+                    u.Prenom.ToLower().Contains(recherche));
             }
 
-            usagers = usagers
-                .OrderBy(u => u.Nom)
-                .ThenBy(u => u.Prenom);
+            usagers = usagers.OrderBy(u => u.Nom).ThenBy(u => u.Prenom);
 
             return View(await usagers.ToListAsync());
         }

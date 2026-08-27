@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LIPAJOLI.Models.Livre>
+﻿@model PaginatedList<LIPAJOLI.Models.Livre>
 
 @{
     ViewData["Title"] = "Gestion des Livres";
@@ -70,26 +70,26 @@
                 @* @Html.DisplayNameFor(model => model.Code) *@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ISBN10)
+                ISBN10
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ISBN13)
+                ISBN13
             </th>
             <th>
                 <a asp-action="Index" asp-route-tri="@ViewData["ParamTitreTri"]">Titre</a>
                 @* @Html.DisplayNameFor(model => model.Titre) *@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Auteurs)
+                Auteurs
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Categorie)
+                Categorie
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Quantite)
+               Quantite
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Prix)
+                Prix
             </th>
             <th></th>
         </tr>
@@ -131,3 +131,23 @@
 }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-tri="@ViewData["CurrentSort"]"
+   asp-route-numeroPage="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-outline-secondary @prevDisabled">
+    Précedent
+</a>
+<a asp-action="Index"
+   asp-route-tri="@ViewData["CurrentSort"]"
+   asp-route-numeroPage="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-outline-secondary @nextDisabled">
+    Suivant
+</a>

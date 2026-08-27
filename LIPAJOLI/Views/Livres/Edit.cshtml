@@ -1,7 +1,11 @@
 ﻿@model LIPAJOLI.Models.Livre
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Modifier un Livre";
+    var categories = Configuration.GetSection("Bibliotheque:Categories").Get<List<string>>();
+    var auteurs = Configuration.GetSection("Bibliotheque:Auteurs").Get<List<string>>();
 }
 
 <h1>Modifier un Livre</h1>
@@ -36,12 +40,28 @@
             </div>
             <div class="form-group">
                 <label asp-for="Auteurs" class="control-label"></label>
-                <input asp-for="Auteurs" class="form-control" />
-                <span asp-validation-for="Auteurs" class="text-danger"></span>
             </div>
+            <span asp-validation-for="Auteurs" class="text-danger"></span>
+            @{
+                var auteurSelectionnee = Model.Auteurs.Split("; ").ToList();
+            }
+            @foreach (var auteur in auteurs)
+            {
+                <div class="form-check">
+                    <input name="listeAuteurs" type="checkbox" value="@auteur" class="form-check-input"
+                           @(auteurSelectionnee.Contains(auteur) ? "checked" :"" )/>
+                    <label class="form-check-label">@auteur</label>
+                </div>
+            }
             <div class="form-group">
                 <label asp-for="Categorie" class="control-label"></label>
-                <input asp-for="Categorie" class="form-control" />
+                <select asp-for="Categorie" class="form-control">
+                    <option value="">--- Sélectionner une catégorie ---</option>
+                    @foreach (var categorie in categories)
+                    {
+                        <option value="@categorie">@categorie</option>
+                    }
+                </select>
                 <span asp-validation-for="Categorie" class="text-danger"></span>
             </div>
             <div class="form-group">

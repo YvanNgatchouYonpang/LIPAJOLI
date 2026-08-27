@@ -18,9 +18,9 @@ namespace LIPAJOLI.Models
         public DateTime? DateRetour { get; set; }
 
         [Required]
-        public string? LivreCode { get; set; } 
+        public int? LivreId { get; set; } 
 
-        [ForeignKey(nameof(LivreCode))]
+        [ForeignKey(nameof(LivreId))]
         public Livre? Livre { get; set; }
 
         [Required]

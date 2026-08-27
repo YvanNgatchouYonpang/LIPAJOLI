@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LIPAJOLI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260825020140_InitialeCreate")]
-    partial class InitialeCreate
+    [Migration("20260827183037_initale")]
+    partial class initale
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,9 +38,9 @@ namespace LIPAJOLI.Migrations
                     b.Property<int?>("ExemplaireId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("LivreCode")
+                    b.Property<int?>("LivreId")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UsagerNoAbonne")
                         .IsRequired()
@@ -50,7 +50,7 @@ namespace LIPAJOLI.Migrations
 
                     b.HasIndex("ExemplaireId");
 
-                    b.HasIndex("LivreCode");
+                    b.HasIndex("LivreId");
 
                     b.HasIndex("UsagerNoAbonne");
 
@@ -64,34 +64,36 @@ namespace LIPAJOLI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CodeLivre")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Etat")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LivreCode")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("LivreId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivreCode");
+                    b.HasIndex("LivreId");
 
                     b.ToTable("Exemplaires", (string)null);
                 });
 
             modelBuilder.Entity("LIPAJOLI.Models.Livre", b =>
                 {
-                    b.Property<string>("Code")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Auteurs")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Categorie")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Code")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ISBN10")
@@ -115,7 +117,7 @@ namespace LIPAJOLI.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Code");
+                    b.HasKey("Id");
 
                     b.ToTable("Livres", (string)null);
                 });
@@ -158,7 +160,7 @@ namespace LIPAJOLI.Migrations
 
                     b.HasOne("LIPAJOLI.Models.Livre", "Livre")
                         .WithMany("Emprunts")
-                        .HasForeignKey("LivreCode")
+                        .HasForeignKey("LivreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -177,7 +179,7 @@ namespace LIPAJOLI.Migrations
                 {
                     b.HasOne("LIPAJOLI.Models.Livre", "Livre")
                         .WithMany()
-                        .HasForeignKey("LivreCode");
+                        .HasForeignKey("LivreId");
 
                     b.Navigation("Livre");
                 });

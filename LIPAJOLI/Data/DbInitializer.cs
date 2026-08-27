@@ -10,8 +10,10 @@ namespace LIPAJOLI.Data
                 IConfiguration configuration)
             {
 
-                // Si des livres existent déjà, on ne réinsère pas les données.
-                if (context.Livres.Any())
+            context.Database.EnsureCreated();
+
+            // Si des livres existent déjà, on ne réinsère pas les données.
+            if (context.Livres.Any())
                 {
                     return;
                 }
@@ -73,12 +75,13 @@ namespace LIPAJOLI.Data
 
                 context.Usagers.AddRange(usagers);
 
-            
 
-                var livres = new List<Livre>
+
+            var livres = new List<Livre>
             {
                 new Livre
                 {
+                    
                     Code = "PRO001",
                     ISBN10 = "0132350882",
                     ISBN13 = "9780132350884",
@@ -91,6 +94,7 @@ namespace LIPAJOLI.Data
 
                 new Livre
                 {
+                    
                     Code = "PRO002",
                     ISBN10 = "0134757599",
                     ISBN13 = "9780134757599",
@@ -103,6 +107,7 @@ namespace LIPAJOLI.Data
 
                 new Livre
                 {
+                    
                     Code = "RES001",
                     ISBN10 = "0132126958",
                     ISBN13 = "9780132126953",
@@ -115,6 +120,7 @@ namespace LIPAJOLI.Data
 
                 new Livre
                 {
+                    
                     Code = "BAS001",
                     ISBN10 = "0073523321",
                     ISBN13 = "9780073523323",
@@ -127,6 +133,7 @@ namespace LIPAJOLI.Data
 
                 new Livre
                 {
+                    
                     Code = "WEB001",
                     ISBN10 = "1718500452",
                     ISBN13 = "9781718500457",
@@ -160,7 +167,7 @@ namespace LIPAJOLI.Data
                     DateLimiteRetour =
                         aujourdHui.AddDays(-5 + nombreJoursEmprunt),
                     DateRetour = null,
-                    LivreCode = livre1.Code,
+                    LivreId = livre1.Id,
                     UsagerNoAbonne = usager1.NoAbonne
                 },
 
@@ -171,7 +178,7 @@ namespace LIPAJOLI.Data
                     DateLimiteRetour =
                         aujourdHui.AddDays(-20 + nombreJoursEmprunt),
                     DateRetour = aujourdHui.AddDays(-10),
-                    LivreCode = livre2.Code,
+                    LivreId = livre2.Id,
                     UsagerNoAbonne = usager2.NoAbonne
                 },
 
@@ -182,7 +189,7 @@ namespace LIPAJOLI.Data
                     DateLimiteRetour =
                         aujourdHui.AddDays(-2 + nombreJoursEmprunt),
                     DateRetour = null,
-                    LivreCode = livre2.Code,
+                    LivreId = livre2.Id,
                     UsagerNoAbonne = usager2.NoAbonne
                 }
             };

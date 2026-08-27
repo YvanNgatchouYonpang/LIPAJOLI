@@ -67,7 +67,7 @@ namespace LIPAJOLI.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LivreCode"] = new SelectList(_context.Livres, "Code", "Code", emprunt.LivreCode);
+            ViewData["LivreId"] = new SelectList(_context.Livres, "Code", "Code", emprunt.LivreId);
             ViewData["UsagerNoAbonne"] = new SelectList(_context.Usagers, "NoAbonne", "NoAbonne", emprunt.UsagerNoAbonne);
             return View(emprunt);
         }
@@ -85,7 +85,7 @@ namespace LIPAJOLI.Controllers
             {
                 return NotFound();
             }
-            ViewData["LivreCode"] = new SelectList(_context.Livres, "Code", "Code", emprunt.LivreCode);
+            ViewData["LivreId"] = new SelectList(_context.Livres, "Code", "Code", emprunt.LivreId);
             ViewData["UsagerNoAbonne"] = new SelectList(_context.Usagers, "NoAbonne", "NoAbonne", emprunt.UsagerNoAbonne);
             return View(emprunt);
         }
@@ -122,7 +122,7 @@ namespace LIPAJOLI.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LivreCode"] = new SelectList(_context.Livres, "Code", "Code", emprunt.LivreCode);
+            ViewData["LivreId"] = new SelectList(_context.Livres, "Code", "Code", emprunt.LivreId);
             ViewData["UsagerNoAbonne"] = new SelectList(_context.Usagers, "NoAbonne", "NoAbonne", emprunt.UsagerNoAbonne);
             return View(emprunt);
         }

@@ -20,9 +20,15 @@ namespace LIPAJOLI.Controllers
         }
 
         // GET: Usagers
-        public async Task<IActionResult> Index(string? recherche)
+        public async Task<IActionResult> Index(string? recherche, string currentFilter, int? numeroPage)
         {
             IQueryable<Usager> usagers = _context.Usagers;
+
+
+            ViewData["CurrentFilter"] = recherche;
+
+            usagers = from u in _context.Usagers
+                     select u;
 
             if (!string.IsNullOrWhiteSpace(recherche))
             {
@@ -35,7 +41,10 @@ namespace LIPAJOLI.Controllers
 
             usagers = usagers.OrderBy(u => u.Nom).ThenBy(u => u.Prenom);
 
-            return View(await usagers.ToListAsync());
+            int pageSize = 3;
+
+            return View(await PaginatedList<Usager>.CreateAsync(usagers.AsNoTracking(),
+               numeroPage ?? 1, pageSize));
         }
 
         // GET: Usagers/Details/5
@@ -58,6 +67,7 @@ namespace LIPAJOLI.Controllers
             }
 
             return View(usager);
+
         }
 
         // GET: Usagers/Create

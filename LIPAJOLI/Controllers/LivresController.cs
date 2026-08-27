@@ -14,21 +14,25 @@ namespace LIPAJOLI.Controllers
     public class LivresController : Controller
     {
         private readonly ApplicationDbContext _context;
-
         public LivresController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         // GET: Livres
-        public async Task<IActionResult> Index(string? recherche,
+        public async Task<IActionResult> Index(string? recherche, string currentFilter,int?numeroPage,
             string? tri)
         {
-            //ViewData["CurrentSort"] = tri;
+            ViewData["CurrentSort"] = tri;
             ViewData["ParamCodeTri"] =String.IsNullOrEmpty(tri) ? "Code_desc" : "";
             ViewData["ParamTitreTri"] = tri == "Titre" ? "Titre_desc" : "Titre";
 
             IQueryable<Livre> livres = _context.Livres;
+
+            ViewData["CurrentFilter"] = recherche;
+
+            livres= from l in _context.Livres
+                    select l;
 
             // Recherche
             if (!string.IsNullOrWhiteSpace(recherche))
@@ -39,19 +43,7 @@ namespace LIPAJOLI.Controllers
             }
 
             // Tri
-            //livres = tri switch
-            //{
-            //    "code" => livres.OrderBy(l => l.Code),
-
-            //    "code_desc" => livres.OrderByDescending(l => l.Code),
-
-            //    "titre" => livres.OrderBy(l => l.Titre),
-
-            //    "titre_desc" => livres.OrderByDescending(l => l.Titre),
-
-            //    _ => livres.OrderBy(l => l.Code)
-            //};
-
+          
             if (string.IsNullOrEmpty(tri))
             {
                 tri = "Code";
@@ -73,7 +65,11 @@ namespace LIPAJOLI.Controllers
                 livres = livres.OrderBy(l => EF.Property<object>(l, tri));
             }
 
-            return View(await livres.ToListAsync());
+            int pageSize = 3;
+
+            //return View(await livres.ToListAsync());
+            return View(await PaginatedList<Livre>.CreateAsync(livres.AsNoTracking(),
+               numeroPage ?? 1, pageSize));
         }
 
 
@@ -105,34 +101,18 @@ namespace LIPAJOLI.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Code,ISBN10,ISBN13,Titre,Auteurs,Categorie,Quantite,Prix")] Livre livre)
+        public async Task<IActionResult> Create([Bind("Code,ISBN10,ISBN13,Titre,Auteurs,Categorie,Quantite,Prix")] Livre livre,List<string>listeAuteurs)
         {
             if (!ModelState.IsValid)
             {
                 return View(livre);
             }
 
-            // Vérification ISBN
-            if (!ValiderIsbn10(livre.ISBN10))
-            {
-                ModelState.AddModelError(
-                    nameof(livre.ISBN10),
-                    "Le numéro ISBN-10 est invalide.");
-
-                return View(livre);
-            }
-
-            if (!ValiderIsbn13(livre.ISBN13))
-            {
-                ModelState.AddModelError(
-                    nameof(livre.ISBN13),
-                    "Le numéro ISBN-13 est invalide.");
-
-                return View(livre);
-            }
-
+           
             // Génération automatique du code
             livre.Code = GenererCodeLivre(livre.Categorie);
+
+            livre.Auteurs = string.Join("; ", listeAuteurs);
 
             _context.Livres.Add(livre);
 
@@ -150,6 +130,7 @@ namespace LIPAJOLI.Controllers
             }
 
             var livre = await _context.Livres.FirstOrDefaultAsync(l => l.Code == id);
+
             if (livre == null)
             {
                 return NotFound();
@@ -162,7 +143,7 @@ namespace LIPAJOLI.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Code,ISBN10,ISBN13,Titre,Auteurs,Categorie,Quantite,Prix")] Livre livre)
+        public async Task<IActionResult> Edit(string id, [Bind("Code,ISBN10,ISBN13,Titre,Auteurs,Categorie,Quantite,Prix")] Livre livre, List<string> listeAuteurs)
         {
             if (id != livre.Code)
             {
@@ -174,27 +155,24 @@ namespace LIPAJOLI.Controllers
                 return View(livre);
             }
 
-            if (!ValiderIsbn10(livre.ISBN10))
-            {
-                ModelState.AddModelError(
-                    nameof(livre.ISBN10),
-                    "Le numéro ISBN-10 est invalide.");
-
-                return View(livre);
-            }
-
-            if (!ValiderIsbn13(livre.ISBN13))
-            {
-                ModelState.AddModelError(
-                    nameof(livre.ISBN13),
-                    "Le numéro ISBN-13 est invalide.");
-
-                return View(livre);
-            }
+            Livre? modificationLivre = await _context.Livres.FirstOrDefaultAsync(l => l.Code == id);
 
             try
             {
-                _context.Update(livre);
+                if (modificationLivre.Categorie != livre.Categorie)
+                {
+                    modificationLivre.Code = GenererCodeLivre(livre.Categorie);
+                }
+
+                modificationLivre.ISBN10 = livre.ISBN10;
+                modificationLivre.ISBN13 = livre.ISBN13;
+                modificationLivre.Titre = livre.Titre;
+                modificationLivre.Auteurs= string.Join("; ", listeAuteurs);
+                modificationLivre.Categorie= livre.Categorie;
+                modificationLivre.Quantite= livre.Quantite;
+                modificationLivre.Prix= livre.Prix;
+
+              //  _context.Update(livre);
 
                 await _context.SaveChangesAsync();
             }
@@ -271,12 +249,6 @@ namespace LIPAJOLI.Controllers
             return _context.Livres.Any(e => e.Code == code);
         }
 
-
-
-
-
-
-
         private string GenererCodeLivre(string categorie)
         {
             string prefixe = categorie
@@ -309,84 +281,6 @@ namespace LIPAJOLI.Controllers
             return $"{prefixe}{prochainNumero:D3}";
         }
 
-
-
-
-
-        private bool ValiderIsbn10(string isbn)
-        {
-            isbn = isbn.Replace("-", "")
-                       .Replace(" ", "")
-                       .ToUpper();
-
-            if (isbn.Length != 10)
-                return false;
-
-            for (int i = 0; i < 9; i++)
-            {
-                if (!char.IsDigit(isbn[i]))
-                    return false;
-            }
-
-            //if (!(char.IsDigit(isbn[9]) || isbn[9] == 'X'))
-            //    return false;
-
-            int somme = 0;
-
-            for (int i = 0; i < 9; i++)
-            {
-                somme += (isbn[i] - '0') * (i+1);
-            }
-
-            int dernierChiffre;
-
-            if (isbn[9] == 'X')
-            {
-                dernierChiffre = 10;
-            }else if (char.IsDigit(isbn[9]))
-            {
-                dernierChiffre = isbn[9] - '0';
-            }else
-            {
-                return false;
-            }
-                //isbn[9] == 'X' ? 10 : isbn[9] - '0';
-
-            somme += 10 * dernierChiffre;
-
-            return somme % 11 == 0;
-        }
-
-
-
-        private bool ValiderIsbn13(string isbn)
-        {
-            isbn = isbn.Replace("-", "")
-                       .Replace(" ", "");
-
-            if (isbn.Length != 13)
-                return false;
-
-            if (!isbn.All(char.IsDigit))
-                return false;
-
-            int somme = 0;
-
-            for (int i = 0; i <= 12; i++)
-            {
-                int chiffre = isbn[i] - '0';
-
-                somme += i % 2 == 0
-                    ? chiffre
-                    : chiffre * 3;
-            }
-
-            int chiffreControle =
-                (10 - (somme % 10)) % 10;
-
-            return chiffreControle == isbn[12] - '0';
-        }
-
-
     }
+
 }

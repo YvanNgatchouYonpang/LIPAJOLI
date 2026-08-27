@@ -5,25 +5,28 @@ namespace LIPAJOLI.Models
     public class Livre
     {
         [Key]
-        //[Required(ErrorMessage = "Le code du livre est obligatoire.")]
+        public int Id {  get; set; }
+
         public string? Code { get; set; } 
 
         [Required(ErrorMessage = "Le numéro ISBN-10 est obligatoire.")]
         [StringLength(10, MinimumLength = 10,
             ErrorMessage = "Le numéro ISBN-10 doit contenir exactement 10 caractères.")]
+        [RegularExpression(@"^\d{9}[\dXx]$", ErrorMessage = "ISBN10 doit contenir exactement 10 caractères")]
         public string ISBN10 { get; set; } 
 
         [Required(ErrorMessage = "Le numéro ISBN-13 est obligatoire.")]
         [StringLength(13, MinimumLength = 13,
             ErrorMessage = "Le numéro ISBN-13 doit contenir exactement 13 caractères.")]
+        [RegularExpression(@"^\d{13}$", ErrorMessage = "ISBN13 doit contenir exactement 13 caractères")]
         public string ISBN13 { get; set; } 
 
         [Required(ErrorMessage = "Le titre est obligatoire.")]
         [StringLength(200, ErrorMessage = "Le titre ne peut pas dépasser 200 caractères.")]
         public string Titre { get; set; } 
 
-        [Required(ErrorMessage = "Au moins un auteur est obligatoire.")]
-        public string Auteurs { get; set; } 
+        //[Required(ErrorMessage = "Au moins un auteur est obligatoire.")]
+        public string? Auteurs { get; set; } 
 
         [Required(ErrorMessage = "La catégorie est obligatoire.")]
         public string Categorie { get; set; } 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LIPAJOLI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialeCreate : Migration
+    public partial class initale : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,18 +15,20 @@ namespace LIPAJOLI.Migrations
                 name: "Livres",
                 columns: table => new
                 {
-                    Code = table.Column<string>(type: "TEXT", nullable: false),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Code = table.Column<string>(type: "TEXT", nullable: true),
                     ISBN10 = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     ISBN13 = table.Column<string>(type: "TEXT", maxLength: 13, nullable: false),
                     Titre = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Auteurs = table.Column<string>(type: "TEXT", nullable: false),
+                    Auteurs = table.Column<string>(type: "TEXT", nullable: true),
                     Categorie = table.Column<string>(type: "TEXT", nullable: false),
                     Quantite = table.Column<int>(type: "INTEGER", nullable: false),
                     Prix = table.Column<decimal>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Livres", x => x.Code);
+                    table.PrimaryKey("PK_Livres", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,17 +54,17 @@ namespace LIPAJOLI.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Etat = table.Column<string>(type: "TEXT", nullable: false),
-                    CodeLivre = table.Column<string>(type: "TEXT", nullable: false),
-                    LivreCode = table.Column<string>(type: "TEXT", nullable: true)
+                    CodeLivre = table.Column<string>(type: "TEXT", nullable: true),
+                    LivreId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Exemplaires", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Exemplaires_Livres_LivreCode",
-                        column: x => x.LivreCode,
+                        name: "FK_Exemplaires_Livres_LivreId",
+                        column: x => x.LivreId,
                         principalTable: "Livres",
-                        principalColumn: "Code");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -74,7 +76,7 @@ namespace LIPAJOLI.Migrations
                     DateEmprunt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DateLimiteRetour = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DateRetour = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    LivreCode = table.Column<string>(type: "TEXT", nullable: false),
+                    LivreId = table.Column<int>(type: "INTEGER", nullable: false),
                     UsagerNoAbonne = table.Column<string>(type: "TEXT", nullable: false),
                     ExemplaireId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
@@ -87,10 +89,10 @@ namespace LIPAJOLI.Migrations
                         principalTable: "Exemplaires",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Emprunts_Livres_LivreCode",
-                        column: x => x.LivreCode,
+                        name: "FK_Emprunts_Livres_LivreId",
+                        column: x => x.LivreId,
                         principalTable: "Livres",
-                        principalColumn: "Code",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Emprunts_Usagers_UsagerNoAbonne",
@@ -106,9 +108,9 @@ namespace LIPAJOLI.Migrations
                 column: "ExemplaireId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Emprunts_LivreCode",
+                name: "IX_Emprunts_LivreId",
                 table: "Emprunts",
-                column: "LivreCode");
+                column: "LivreId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Emprunts_UsagerNoAbonne",
@@ -116,9 +118,9 @@ namespace LIPAJOLI.Migrations
                 column: "UsagerNoAbonne");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Exemplaires_LivreCode",
+                name: "IX_Exemplaires_LivreId",
                 table: "Exemplaires",
-                column: "LivreCode");
+                column: "LivreId");
         }
 
         /// <inheritdoc />

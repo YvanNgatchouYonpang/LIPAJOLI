@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LIPAJOLI.Models.Usager>
+﻿@model PaginatedList<LIPAJOLI.Models.Usager>
 
 @{
     ViewData["Title"] = "Gestion des usagers";
@@ -163,3 +163,23 @@
     </tbody>
 
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+  
+   asp-route-numeroPage="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-outline-secondary @prevDisabled">
+    Précedent
+</a>
+<a asp-action="Index"
+   
+   asp-route-numeroPage="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-outline-secondary @nextDisabled">
+    Suivant
+</a>

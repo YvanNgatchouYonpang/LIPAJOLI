@@ -55,7 +55,13 @@ Les pratiques de sécurité réellement mises en œuvre dans le projet seront d�
 
 ## 🖥️ Aperçu
 
-Des captures d'écran de l'application seront ajoutées afin de présenter les principales interfaces et fonctionnalités.
+### 📚 Gestion des livres
+
+![Gestion des livres](screenshots/livres.png)
+
+### 👤 Gestion des usagers
+
+![Gestion des usagers](screenshots/usagers.png)
 
 ## ⚙️ Installation
 

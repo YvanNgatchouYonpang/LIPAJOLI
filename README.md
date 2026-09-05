@@ -57,7 +57,7 @@ Les pratiques de sécurité réellement mises en œuvre dans le projet seront d�
 
 ### 📚 Gestion des livres
 
-![Gestion des livres](screenshots/livres.png)
+![Gestion des livres](screenshots/Livres.png)
 
 ### 👤 Gestion des usagers
 

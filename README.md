@@ -55,6 +55,10 @@ Les pratiques de sécurité réellement mises en œuvre dans le projet seront d�
 
 ## 🖥️ Aperçu
 
+### Accueil
+
+![Gestion des emprunts](screenshots/Accueil.png)
+
 ### 📚 Gestion des livres
 
 ![Gestion des livres](screenshots/Livres.png)
